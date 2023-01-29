@@ -1,0 +1,60 @@
+name: Deploy Frontend
+on:
+  push:
+    branches:
+      - main
+env:
+  LOCAL_IMAGE: pigutty/react-test
+  REMOTE_IMAGE: react-test
+  LOCATION: us
+  REPOSITORY: my-container
+
+jobs:
+  build:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: 'actions/checkout@v3' 
+    
+    - name: authentication
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{secrets.SERVICE_ACCOUNT}}
+    
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+
+    - name: Authorize Docker push
+      run: gcloud auth configure-docker us-docker.pkg.dev
+
+    - name: Build Docker image
+      run: docker build -t ${{env.LOCAL_IMAGE}} -f Dockerfile.dev .
+
+    - name: test
+      run: docker run -e CI=true ${{env.LOCAL_IMAGE}} npm run test
+
+    - name: production build
+      run: |
+        docker build -t multi-client ./client
+        docker build -t multi-nginx ./nginx
+        docker build -t multi-server ./server
+        docker build -t multi-worker ./worker
+
+    # - name: tag 
+    #   run: docker tag ${{env.LOCAL_IMAGE}} ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/${{env.REMOTE_IMAGE}}
+
+    # - name: push
+    #   run: docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/${{env.REMOTE_IMAGE}}
+
+    # - id: 'deploy'
+    #   uses: 'google-github-actions/deploy-cloudrun@v1'
+    #   with:
+    #     service: 'mycloudrun'
+    #     image: ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/${{env.REMOTE_IMAGE}}
+
+    # - name: 'Use output'
+    #   run: 'curl "${{ steps.deploy.outputs.url }}"'
