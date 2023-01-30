@@ -29,8 +29,8 @@ jobs:
     - name: Authorize Docker push
       run: gcloud auth configure-docker ${{env.LOCATION}}-docker.pkg.dev
 
-    - name: Build Docker image
-      run: docker build -t pigtty/react-test -f Dockerfile.dev ./client
+    - name: build test image
+      run: docker build -t pigtty/react-test -f ./client/Dockerfile.dev ./client
 
     - name: test
       run: docker run -e CI=true pigutty/react-test npm run test
