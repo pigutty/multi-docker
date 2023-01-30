@@ -52,7 +52,7 @@ jobs:
     - name: push
       run: |
         docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/multi-client
-        docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/mjulti-nginx
+        docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/multi-nginx
         docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/multi-server
         docker push ${{env.LOCATION}}-docker.pkg.dev/${{secrets.PROJECT_ID}}/${{env.REPOSITORY}}/multi-worker
 
