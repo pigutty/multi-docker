@@ -30,7 +30,7 @@ jobs:
       run: gcloud auth configure-docker ${{env.LOCATION}}-docker.pkg.dev
 
     - name: build test image
-      run: docker build -t pigtty/react-test -f ./client/Dockerfile.dev ./client
+      run: docker build -t pigutty/react-test -f ./client/Dockerfile.dev ./client
 
     - name: test
       run: docker run -e CI=true pigutty/react-test npm run test
